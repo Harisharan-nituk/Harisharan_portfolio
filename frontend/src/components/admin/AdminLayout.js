@@ -1,86 +1,82 @@
-// frontend/src/components/admin/AdminLayout.js
+// portfolio_py/frontend/src/components/admin/AdminLayout.js
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // Adjust path as needed
-
-// NEW: Import icons from lucide-react
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   LayoutDashboard, 
-  FileText,        // For Resumes
-  Briefcase,       // For Projects
-  GraduationCap,   // For Education
+  FileText,
+  Briefcase,
   LogOut, 
-  ExternalLink 
+  ExternalLink,
+  Info,
+  Link as LucideLinkIcon
 } from 'lucide-react';
 
 const AdminLayout = () => {
   const { currentUser, logout } = useAuth();
-  // const navigate = useNavigate(); // useNavigate is available if needed, logout in context handles it
-
-  const handleLogout = () => {
-    logout();
-  };
+  const location = useLocation();
 
   const navLinkClasses = ({ isActive }) =>
-    `flex items-center px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out ${ // ADDED: flex items-center
+    `flex items-center px-4 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out ${
       isActive
-        ? 'bg-indigo-700 text-white shadow-md'
-        : 'text-gray-300 hover:bg-indigo-500 hover:text-white dark:text-gray-300 dark:hover:bg-indigo-600 dark:hover:text-white'
+        ? 'bg-indigo-600 text-white shadow-md'
+        : 'text-gray-300 hover:bg-indigo-500/20 hover:text-white'
     }`;
+    
+  // Check if current path is under /admin/
+  // Since this layout only renders for /admin/*, we can assume Outlet is always needed.
+  // The original check was a bit redundant. We will render Outlet directly.
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-slate-900"> {/* Added dark mode for main bg */}
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 dark:bg-slate-800 text-gray-100 flex flex-col space-y-2 p-4 shadow-lg transition-colors duration-300">
+    <div className="flex h-screen bg-gray-100 dark:bg-slate-900">
+      <aside className="w-64 bg-gray-800 dark:bg-slate-800 text-gray-100 flex flex-col p-4 shadow-lg">
         <div className="text-center py-4 border-b border-gray-700 dark:border-slate-700">
           <h2 className="text-xl font-semibold text-white">Admin Portal</h2>
           {currentUser && (
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Welcome, {currentUser.name}</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Welcome, {currentUser.name}
+            </p>
           )}
         </div>
-        <nav className="flex-grow mt-4 space-y-1"> {/* Added margin-top and adjusted spacing */}
+        
+        <nav className="flex-grow mt-4 space-y-1">
           <NavLink to="/admin/dashboard" className={navLinkClasses}>
-            <LayoutDashboard className="mr-3 h-5 w-5" /> {/* Icon Added */}
-            Dashboard
+            <LayoutDashboard className="mr-3 h-5 w-5" />
+           Dashboard
           </NavLink>
-          <NavLink to="/admin/resumes" className={navLinkClasses}>
-            <FileText className="mr-3 h-5 w-5" /> {/* Icon Added */}
-            Manage Resumes
+          <NavLink to="/admin/about" className={navLinkClasses}>
+            <Info className="mr-3 h-5 w-5" />
+            Manage About
           </NavLink>
-          <NavLink to="/admin/projects" className={navLinkClasses}>
-            <Briefcase className="mr-3 h-5 w-5" /> {/* Icon Added */}
+           <NavLink to="/admin/projects" className={navLinkClasses}>
+            <Briefcase className="mr-3 h-5 w-5" />
             Manage Projects
           </NavLink>
-          <NavLink to="/admin/education" className={navLinkClasses}>
-            <GraduationCap className="mr-3 h-5 w-5" /> {/* Icon Added */}
-            Manage Education
+          <NavLink to="/admin/resumes" className={navLinkClasses}>
+            <FileText className="mr-3 h-5 w-5" />
+            Manage Resumes
           </NavLink>
-          {/* Add more admin links here as needed, with their icons */}
+          <NavLink to="/admin/social-links" className={navLinkClasses}>
+            <LucideLinkIcon className="mr-3 h-5 w-5" />
+            Manage Social Links
+          </NavLink>
         </nav>
-        <div className="pt-4 border-t border-gray-700 dark:border-slate-700 space-y-2">
-          <NavLink 
-            to="/" 
-            className={`${navLinkClasses({isActive:false})} text-center bg-gray-700 dark:bg-slate-700 hover:bg-gray-600 dark:hover:bg-slate-600`}
-          >
-            <ExternalLink className="mr-3 h-5 w-5 inline-block" /> {/* Icon Added */}
-            Go to Public Site
-          </NavLink>
-          <button
-            onClick={handleLogout}
-            className={`${navLinkClasses({isActive:false})} w-full text-left bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800`}
-          >
-            <LogOut className="mr-3 h-5 w-5" /> {/* Icon Added */}
+
+        <div className="pt-4 mt-auto border-t border-gray-700 dark:border-slate-700 space-y-2">
+          <a href="/" target="_blank" rel="noopener noreferrer" className={navLinkClasses({isActive:false})}>
+            <ExternalLink className="mr-3 h-5 w-5" />
+            View Public Site
+          </a>
+          <button onClick={logout} className={`${navLinkClasses({isActive:false})} w-full text-left`}>
+            <LogOut className="mr-3 h-5 w-5" />
             Logout
           </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-slate-900 p-6 md:p-8 transition-colors duration-300">
-          <Outlet /> {/* Child routes (admin pages) will render here */}
-        </main>
-      </div>
+      <main className="flex-1 overflow-y-auto p-6 md:p-8">
+        <Outlet />
+      </main>
     </div>
   );
 };

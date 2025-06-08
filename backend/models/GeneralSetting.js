@@ -12,7 +12,7 @@ const generalSettingsSchema = new mongoose.Schema(
     },
     profilePhotoUrl: {
       type: String,
-      default: '/images/default-profile.png', // Default if no photo uploaded
+      default: '/images/default-profile.png',
     },
     storedProfilePhotoFilename: { 
       type: String, 
@@ -35,6 +35,18 @@ const generalSettingsSchema = new mongoose.Schema(
       type: String,
       default: 'Welcome to my portfolio! Update this introduction from the admin panel.',
     },
+    // --- NEW FIELDS ---
+    aboutMeIntroduction: {
+      type: [String],
+      default: [
+        "Hello! I'm a passionate developer with a strong foundation in creating dynamic and responsive web applications.",
+        "My journey in tech is driven by a constant desire to learn, innovate, and solve complex problems with elegant and efficient solutions."
+      ]
+    },
+    aboutMePhilosophy: {
+      type: String,
+      default: "I believe that the best solutions come from a deep understanding of user needs, collaborative teamwork, and a commitment to clean, maintainable code."
+    }
   },
   {
     timestamps: true,

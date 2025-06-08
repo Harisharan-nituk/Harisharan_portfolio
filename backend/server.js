@@ -17,6 +17,10 @@ import settingsRoutes from './routes/settingsRoutes.js';
 import educationRoutes from './routes/educationRoutes.js'; // <-- NEW: Import Education Routes
 import skillCategoryRoutes from './routes/skillCategoryRoutes.js'; // <-- NEW: Import SkillCategory Routes
 
+import certificateRoutes from './routes/certificateRoutes.js'; // <-- Add this
+import socialLinkRoutes from './routes/socialLinkRoutes.js'; // <-- ADD THIS
+import dashboardRoutes from './routes/dashboardRoutes.js'; // <-- IMPORT NEW ROUTE
+import achievementRoutes from './routes/achievementRoutes.js'; // <-- ADD THIS
 
 // Import error handling middleware
 import { notFound, errorHandler } from './middleware/errorHandler.js';
@@ -68,6 +72,7 @@ app.use('/uploads/resumes', express.static(path.join(__dirname, 'uploads/resumes
 
 app.use('/uploads/project_images', express.static(path.join(__dirname, 'uploads/project_images'))); 
 // profile image 
+app.use('/uploads/certificate_images', express.static(path.join(__dirname, 'uploads/certificate_images')));
 
 app.use('/api/auth',authRoutes);
 // ---------------------------------------------
@@ -80,6 +85,10 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/resumes', resumeRoutes); // Mount your resume routes
 app.use('/api/skillcategories', skillCategoryRoutes); // <-- NEW: Mount SkillCategory Routes
+app.use('/api/certificates', certificateRoutes); // <-- Add this
+app.use('/api/sociallinks', socialLinkRoutes); // <-- ADD THIS
+app.use('/api/admin', dashboardRoutes); // <-- MOUNT THE NEW ROUTE
+app.use('/api/achievements', achievementRoutes); // <-- ADD THIS LINE
 
 // Custom Error Handling Middleware
 app.use(notFound); // Handles 404 errors (routes not found)

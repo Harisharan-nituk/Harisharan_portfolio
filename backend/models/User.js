@@ -1,6 +1,7 @@
 // backend/models/User.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs'; // Corrected import for bcryptjs
+import crypto from 'crypto'; // Import the crypto module
 
 const userSchema = new mongoose.Schema(
   {
@@ -28,6 +29,8 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false, // Default to not an admin
     },
+     passwordResetToken: String,
+    passwordResetExpire: Date,
   },
   {
     timestamps: true, // Adds createdAt and updatedAt automatically
@@ -49,6 +52,24 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+// --- NEW METHOD TO GENERATE AND HASH PASSWORD RESET TOKEN ---
+userSchema.methods.getResetPasswordToken = function () {
+  // Generate token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  // Hash token and set to passwordResetToken field
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Set expire time (e.g., 15 minutes)
+  this.passwordResetExpire = Date.now() + 15 * 60 * 1000;
+
+  return resetToken; // Return the unhashed token
+};
+
+
 
 const User = mongoose.model('User', userSchema);
 

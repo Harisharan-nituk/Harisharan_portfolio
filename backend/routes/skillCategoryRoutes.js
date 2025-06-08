@@ -33,7 +33,7 @@ router.route('/:id')
 router.route('/:categoryId/skills')
   .post(protect, admin, addSkillToCategory); 
   // POST /api/skillcategories/:id/skills - Adds a skill to this category
-router.route('/:categoryId/skills/:skillId')
+router.route('/:categoryId/skills/:skillName')
   .delete(protect, admin, deleteSkillFromCategory);
 // router.route('/:id/skills/remove') // Or use DELETE /api/skillcategories/:id/skills/:skillname (more RESTful)
 //   .delete(protect, admin, removeSkillFromCategory); // Example: DELETE /api/skillcategories/:id/skills - with skillName in body

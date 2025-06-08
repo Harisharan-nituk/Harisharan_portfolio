@@ -10,21 +10,17 @@ const skillCategorySchema = new mongoose.Schema(
       trim: true,
     },
     skills: {
-      type: [String], // Array of strings
+      type: [String],
       default: [],
     },
-    displayOrder: {
-      type: Number,
-      default: 0,
-    }
   },
   {
     timestamps: true,
   }
 );
 
-skillCategorySchema.index({ name: 1 });
-skillCategorySchema.index({ displayOrder: 1, createdAt: -1 });
+// skillCategorySchema.index({ name: 1 });
+skillCategorySchema.index({  createdAt: -1 });
 
 const SkillCategory = mongoose.model('SkillCategory', skillCategorySchema);
 export default SkillCategory;

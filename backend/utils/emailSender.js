@@ -1,41 +1,34 @@
 // backend/utils/emailSender.js
-// This is a placeholder. For a real app, use a library like Nodemailer.
-// import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
-  console.log('--- Email Sending Simulation ---');
-  console.log(`To: ${options.email}`);
-  console.log(`Subject: ${options.subject}`);
-  console.log(`Message: ${options.message}`);
-  console.log('--- Email Sent (Simulated) ---');
-
-  // Example with Nodemailer (you'd need to install and configure it)
-  /*
+  // 1. Create a transporter for Gmail
+  // This configuration correctly uses the 'gmail' service with your .env credentials.
   const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE, // e.g., 'gmail', 'sendgrid'
+    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
+      user: process.env.EMAIL_USERNAME, // Your full Gmail address from .env
+      pass: process.env.EMAIL_PASSWORD, // Your 16-character App Password from .env
     },
   });
 
+  // 2. Define the email options
   const mailOptions = {
-    from: `Your Name <${process.env.EMAIL_FROM}>`,
+    from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
     to: options.email,
     subject: options.subject,
-    html: options.message, // or text: options.text
+    html: options.message,
   };
 
+  // 3. Send the email using the transporter
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('Message sent: %s', info.messageId);
+    console.log('Email sent successfully via Gmail: ' + info.response);
     return true;
   } catch (error) {
-    console.error('Error sending email:', error);
-    return false;
+    console.error('Nodemailer Error: Could not send email.', error);
+    throw new Error('Email could not be sent. Please check server logs and .env configuration.');
   }
-  */
-  return true; // Simulate success
 };
 
 export default sendEmail;

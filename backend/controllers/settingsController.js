@@ -6,6 +6,7 @@ import fs from 'fs';
 import GeneralSetting from '../models/GeneralSetting.js';
 import { fileURLToPath } from 'url';
 
+// ... (multer configuration remains the same) ...
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const profilePhotoUploadsDir = path.join(__dirname, '..', 'uploads/profile_photo');
@@ -13,12 +14,9 @@ const profilePhotoUploadsDir = path.join(__dirname, '..', 'uploads/profile_photo
 try {
   if (!fs.existsSync(profilePhotoUploadsDir)) {
     fs.mkdirSync(profilePhotoUploadsDir, { recursive: true });
-    console.log(`Created profile photo upload directory: ${profilePhotoUploadsDir}`);
-  } else {
-    console.log(`Multer will use existing profile photo upload directory: ${profilePhotoUploadsDir}`);
   }
 } catch (err) {
-  console.error(`Error accessing/creating profile photo upload directory: ${profilePhotoUploadsDir}`, err);
+  console.error(`Error creating profile photo upload directory: ${profilePhotoUploadsDir}`, err);
 }
 
 const profilePhotoStorage = multer.diskStorage({
@@ -40,8 +38,9 @@ const imageFileFilter = (req, file, cb) => {
 const uploadProfilePhotoMiddleware = multer({
   storage: profilePhotoStorage,
   fileFilter: imageFileFilter,
-  limits: { fileSize: 2 * 1024 * 1024 } // 2MB limit
+  limits: { fileSize: 2 * 1024 * 1024 }
 }).single('profilePhoto');
+
 
 const getSettings = asyncHandler(async (req, res) => {
   const settings = await GeneralSetting.getSingleton();
@@ -50,12 +49,30 @@ const getSettings = asyncHandler(async (req, res) => {
 
 const updateSettings = asyncHandler(async (req, res) => {
   const settings = await GeneralSetting.getSingleton();
-  const { ownerName, jobTitle, specialization, homePageIntroParagraph } = req.body;
+  const { 
+    ownerName, 
+    jobTitle, 
+    specialization, 
+    homePageIntroParagraph,
+    // --- NEW FIELDS ---
+    aboutMeIntroduction,
+    aboutMePhilosophy
+  } = req.body;
 
   settings.ownerName = ownerName !== undefined ? ownerName : settings.ownerName;
   settings.jobTitle = jobTitle !== undefined ? jobTitle : settings.jobTitle;
   settings.specialization = specialization !== undefined ? specialization : settings.specialization;
   settings.homePageIntroParagraph = homePageIntroParagraph !== undefined ? homePageIntroParagraph : settings.homePageIntroParagraph;
+
+  // --- HANDLE NEW FIELDS ---
+  if (aboutMeIntroduction !== undefined) {
+    // Expecting a single string from a textarea, split it by new lines
+    settings.aboutMeIntroduction = Array.isArray(aboutMeIntroduction) 
+      ? aboutMeIntroduction 
+      : (typeof aboutMeIntroduction === 'string' ? aboutMeIntroduction.split('\n').filter(p => p.trim() !== '') : settings.aboutMeIntroduction);
+  }
+  settings.aboutMePhilosophy = aboutMePhilosophy !== undefined ? aboutMePhilosophy : settings.aboutMePhilosophy;
+
 
   const updatedSettings = await settings.save();
   res.json(updatedSettings);
@@ -63,7 +80,7 @@ const updateSettings = asyncHandler(async (req, res) => {
 
 const uploadOrUpdateProfilePhoto = (req, res) => {
   uploadProfilePhotoMiddleware(req, res, asyncHandler(async (err) => {
-    if (err) { // Covers multer errors and our custom fileFilter error
+    if (err) {
       if (err.code === 'LIMIT_FILE_SIZE') return res.status(400).json({ message: 'Profile photo too large. Max 2MB.' });
       return res.status(400).json({ message: err.message || 'Profile photo upload error.' });
     }

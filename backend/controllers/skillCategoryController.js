@@ -6,7 +6,7 @@ import SkillCategory from '../models/SkillCategory.js';
 // @route   POST /api/skillcategories
 // @access  Admin
 export const addSkillCategory = asyncHandler(async (req, res) => {
-  const { name, displayOrder } = req.body;
+  const { name } = req.body;
   if (!name) {
     res.status(400);
     throw new Error('Category name is required.');
@@ -19,7 +19,7 @@ export const addSkillCategory = asyncHandler(async (req, res) => {
   const skillCategory = new SkillCategory({
     name,
     skills: [], // Initialize with empty skills
-    displayOrder: displayOrder || 0,
+   
   });
   const createdCategory = await skillCategory.save();
   res.status(201).json(createdCategory);
@@ -29,7 +29,7 @@ export const addSkillCategory = asyncHandler(async (req, res) => {
 // @route   GET /api/skillcategories
 // @access  Public
 export const getSkillCategories = asyncHandler(async (req, res) => {
-  const categories = await SkillCategory.find({}).sort({ displayOrder: 1, name: 1 });
+  const categories = await SkillCategory.find({}).sort({ name: 1 });
   res.json(categories);
 });
 
@@ -46,11 +46,10 @@ export const getSkillCategoryById = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Update a skill category (name, displayOrder)
 // @route   PUT /api/skillcategories/:id
 // @access  Admin
 export const updateSkillCategory = asyncHandler(async (req, res) => {
-  const { name, displayOrder } = req.body;
+  const { name} = req.body;
   const category = await SkillCategory.findById(req.params.id);
 
   if (!category) {
@@ -65,9 +64,7 @@ export const updateSkillCategory = asyncHandler(async (req, res) => {
     }
     category.name = name;
   }
-  if (displayOrder !== undefined) {
-    category.displayOrder = displayOrder;
-  }
+ 
   // Note: We are NOT directly updating category.skills here.
   const updatedCategory = await category.save();
   res.json(updatedCategory);
