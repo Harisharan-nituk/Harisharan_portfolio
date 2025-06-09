@@ -32,17 +32,6 @@ dotenv.config();
 connectDB();
 
 // Ensure default general settings document exists
-GeneralSetting.getSingleton().then(settingsDoc => {
-  if (settingsDoc) {
-    
-    // You can log specific settings if needed, e.g., settingsDoc.ownerName
-    console.log('General settings document successfully loaded or created.');
-  }
-}).catch(err => {
-  console.error('CRITICAL: Error ensuring general settings document on startup:', err);
-  // Depending on how critical these settings are, you might want to stop the server
-  // process.exit(1); 
-});
 
 
 // For ES Modules, to get __dirname equivalent
@@ -96,8 +85,4 @@ app.use(errorHandler); // Handles other errors
 
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => {
-  console.log(
-    `Backend server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`
-  );
-});
+app.listen(PORT);

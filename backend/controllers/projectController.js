@@ -67,12 +67,9 @@ const projectImagesUploadsDir = path.join(__dirname, '..', 'uploads/project_imag
 try {
   if (!fs.existsSync(projectImagesUploadsDir)) {
     fs.mkdirSync(projectImagesUploadsDir, { recursive: true });
-    console.log(`Created project images upload directory: ${projectImagesUploadsDir}`);
   } else {
-    console.log(`Multer will use existing project images upload directory: ${projectImagesUploadsDir}`);
   }
 } catch (err) {
-  console.error(`Error accessing/creating project images upload directory: ${projectImagesUploadsDir}`, err);
 }
 
 // Multer disk storage configuration for project images

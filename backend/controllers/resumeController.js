@@ -16,10 +16,7 @@ const uploadsDir = path.join(__dirname, '..', 'uploads/resumes');
 try {
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
-    console.log(`Created uploads directory: ${uploadsDir}`);
-  } else {
-    console.log(`Multer will use existing uploads directory: ${uploadsDir}`);
-  }
+  } 
 } catch (err) {
   console.error(`Error accessing/creating uploads directory: ${uploadsDir}`, err);
 }
